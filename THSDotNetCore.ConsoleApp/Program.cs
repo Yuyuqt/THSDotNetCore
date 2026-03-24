@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System.Data;
 using System.Data.SqlClient;
+using THSDotNetCore.ConsoleApp;
 
 namespace ConsoleApp
 {
@@ -17,7 +18,7 @@ namespace ConsoleApp
             //EFCore / Entity Framework
 
             // max connection = 100
-            var connectionString = "Data Source = DESKTOP-BP9A061;Initial Catalog=DotNetTraining;User ID=sa;Password=sasa@123;";
+            string connectionString = "Data Source = DESKTOP-BP9A061;Initial Catalog=DotNetTraining;User ID=sa;Password=sasa@123;";
             Console.WriteLine(value: "Connection String " + connectionString);
             SqlConnection connection = new SqlConnection(connectionString);
             Console.WriteLine(value: "Connection opening...");
@@ -27,7 +28,7 @@ namespace ConsoleApp
 
             //
 
-            var query = @"SELECT [BlogId]
+            string query = @"SELECT [BlogId]
       ,[BlogTitle]
       ,[BlogAuthor]
       ,[BlogContent]
@@ -79,7 +80,7 @@ namespace ConsoleApp
 
 
             // max connection = 100
-            var connectionString2 = "Data Source = DESKTOP-BP9A061;Initial Catalog=DotNetTraining;User ID=sa;Password=sasa@123;";
+            string connectionString2 = "Data Source = DESKTOP-BP9A061;Initial Catalog=DotNetTraining;User ID=sa;Password=sasa@123;";
            
             SqlConnection connection2 = new SqlConnection(connectionString2);
             Console.WriteLine(value: "Connection opening...");
@@ -91,18 +92,76 @@ namespace ConsoleApp
            ,[BlogContent]
            ,[DeleteFlag])
      VALUES
-           ('{title}'
-           ,'{author}'
-           ,'{content}'
-           ,0)";
+           (@BlogTitle
+      ,@BlogAuthor
+      ,@BlogContent
+      ,0)";
 
-            SqlCommand cmd2 = new SqlCommand(queryInsert   , connection2);
-            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-            adapter.Fill(dt);
+            
+
+            SqlCommand cmd2 = new SqlCommand(queryInsert, connection2);
+            cmd2.Parameters.AddWithValue("@BlogTitle", title);
+            cmd2.Parameters.AddWithValue("@BlogAuthor", author);
+            cmd2.Parameters.AddWithValue("@BlogContent", content);
+            
+
+            int result = cmd2.ExecuteNonQuery();
+
+           
 
             connection2.Close();
+/*
+            if (result == 1)
+            {
+                Console.WriteLine("Saving Successful.");
+            }
+            else
+            {
+                Console.WriteLine("Saving Failed.");
+            }
+*/
 
+            Console.WriteLine(result== 1 ? "Saving Successful." : "Saving Failed.");
+
+
+            AdoDotNetExample adoDotNetExample = new AdoDotNetExample();
+
+            Console.WriteLine("\n1. Read");
+            Console.WriteLine("2. Create");
+            Console.WriteLine("3. Edit");
+            Console.WriteLine("4. Update");
+
+            Console.Write("Choose option: ");
+            string input = Console.ReadLine();
+
+            switch (input)
+            {
+                case "1":
+                    adoDotNetExample.Read();
+                    break;
+                case "2":
+                    adoDotNetExample.Create();
+                    break;
+                case "3":
+                    adoDotNetExample.Edit();
+                    break;
+                case "4":
+                    adoDotNetExample.Update();
+                    break;
+
+
+            }
+
+            //AdoDotNetExample adoDotNetExample = new AdoDotNetExample();
+
+            //Console.WriteLine("\n--- READ SECTION ---");
+            //adoDotNetExample.Read();
+
+            //Console.WriteLine("\n--- CREATE SECTION ---");
+            //adoDotNetExample.Create();
+
+            //Console.WriteLine("\n--- EDIT SECTION ---");
+            //adoDotNetExample.Edit();
 
             Console.ReadKey();
         }
