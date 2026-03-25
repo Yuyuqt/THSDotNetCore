@@ -3,4 +3,6 @@
     <File Path="README.md" />
   </Folder>
   <Project Path="THSDotNetCore.ConsoleApp/THSDotNetCore.ConsoleApp.csproj" />
+  <Project Path="THSDotNetCore.Database/THSDotNetCore.Database.csproj" Id="c3e1dcc9-6938-4d3a-b66a-98900162c87d" />
+  <Project Path="THSDotNetCore.RestApi/THSDotNetCore.RestApi.csproj" Id="a0f70e0b-089e-4b9e-ac9e-bba4d0ee64b6" />
 </Solution>
