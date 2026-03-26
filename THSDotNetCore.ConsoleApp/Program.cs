@@ -177,6 +177,9 @@ namespace ConsoleApp
             //string query = "[BlogAuthor] = @BlogAuthor, ";
             //Console.WriteLine(query.Substring(0, query.Length - 2));
 
+            DapperExample2 dapperExample2= new DapperExample2();
+            dapperExample2.Read();
+
             Console.ReadKey();
         }
     }
