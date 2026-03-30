@@ -1,92 +1,122 @@
-﻿using RestSharp;
+﻿using Newtonsoft.Json;
+using RestSharp;
 using System;
-using System.Reflection.Metadata;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
-public class RestClientExample
+namespace THSDotNetCore.ConsoleApp3
 {
-    private readonly RestClient _client;
-
-    public RestClientExample()
+    public class RestClientExample
     {
-        _client = new RestClient("https://localhost:7010/api/");
-    }
 
-    public async Task RunAsync()
-    {
-        await GetBlogs();
-        await GetBlog(1);
-        await CreateBlog();
-        await UpdateBlog(1);
-        await DeleteBlog(1);
-    }
+        private readonly RestClient _client = new RestClient();
+        private readonly string postEndpoint = "https://jsonplaceholder.typicode.com/posts";
 
-    // GET all
-    public async Task GetBlogs()
-    {
-        var request = new RestRequest("blog", Method.Get);
-        var response = await _client.ExecuteAsync(request);
+        public bool JsonStr { get; private set; }
 
-        Console.WriteLine("GET ALL:");
-        Console.WriteLine(response.Content);
-    }
-
-    // GET by id
-    public async Task GetBlog(int id)
-    {
-        var request = new RestRequest($"blog/{id}", Method.Get);
-        var response = await _client.ExecuteAsync(request);
-
-        Console.WriteLine($"GET {id}:");
-        Console.WriteLine(response.Content);
-    }
-
-    // POST
-    public async Task CreateBlog()
-    {
-        var blog = new Blog
+        public RestClientExample()
         {
-            Title = "New Blog",
-            Author = "Yurina",
-            Content = "Created with RestClient"
-        };
+            _client = new RestClient();
+        }
 
-        var request = new RestRequest("blog", Method.Post);
-        request.AddJsonBody(blog);
 
-        var response = await _client.ExecuteAsync(request);
 
-        Console.WriteLine("POST:");
-        Console.WriteLine(response.Content);
-    }
-
-    // PUT
-    public async Task UpdateBlog(int id)
-    {
-        var blog = new Blog
+        public async Task Read()
         {
-            Id = id,
-            Title = "Updated Blog",
-            Author = "Yurina",
-            Content = "Updated with RestClient"
-        };
+            RestRequest request = new RestRequest("posts", Method.Get);
+            var response = await _client.GetAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                string JsonStr =  response.Content!;
+                Console.WriteLine(JsonStr);
+            }
+        }
 
-        var request = new RestRequest($"blog/{id}", Method.Put);
-        request.AddJsonBody(blog);
 
-        var response = await _client.ExecuteAsync(request);
+        public async Task Edit(int id)
+        {
+            RestRequest request = new RestRequest($"{postEndpoint} /{id}", Method.Get);
+            var response = await _client.ExecuteAsync(request);
 
-        Console.WriteLine("PUT:");
-        Console.WriteLine(response.Content);
-    }
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Console.WriteLine("No data found.");
+                return;
+            }
 
-    // DELETE
-    public async Task DeleteBlog(int id)
-    {
-        var request = new RestRequest($"blog/{id}", Method.Delete);
-        var response = await _client.ExecuteAsync(request);
 
-        Console.WriteLine("DELETE:");
-        Console.WriteLine(response.Content);
+            if (response.IsSuccessStatusCode)
+            {
+                string JsonStr =  response.Content!;
+                Console.WriteLine(JsonStr);
+            }
+        }
+        public async Task Create(String title, string body, int userId)
+        {
+            PostModel requestmodel = new PostModel()
+            {
+                body = body,
+                title = title,
+                userId = userId
+            };// C# object | .NET object
+            RestRequest request = new RestRequest(postEndpoint, Method.Post);
+            request.AddJsonBody(requestmodel);
+
+            //var jsonRequest = JsonConvert.SerializeObject(requestmodel);
+            //var content = new StringContent(jsonRequest, Encoding.UTF8, Application.Json);
+
+            var response = await _client.ExecuteAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine( response.Content!);
+            }
+        }
+
+        public async Task Update(int id, String title, string body, int userId)
+        {
+            PostModel requestmodel = new PostModel()
+            {
+
+                body = body,
+                title = title,
+                userId = userId
+            };// C# object | .NET object
+            RestRequest request = new RestRequest(postEndpoint, Method.Patch);
+            request.AddJsonBody(requestmodel);
+
+            //var jsonRequest = JsonConvert.SerializeObject(requestmodel);
+            //var content = new StringContent(jsonRequest, Encoding.UTF8, Application.Json);
+
+            var response = await _client.ExecuteAsync(request);
+
+            
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine( response.Content!);
+            }
+        }
+
+        public async Task Delete(int id)
+        {
+            RestRequest request = new RestRequest($"{postEndpoint} /{id}", Method.Delete);
+            var response = await _client.ExecuteAsync(request);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Console.WriteLine("No data found.");
+                return;
+            }
+
+
+            if (response.IsSuccessStatusCode)
+            {
+                string JsonStr =  response.Content;
+                Console.WriteLine(JsonStr);
+            }
+        }
     }
 }
