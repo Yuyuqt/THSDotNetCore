@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
@@ -17,60 +17,40 @@ namespace THSDotNetCore.RestApi.Controllers
 
 
         [HttpGet("{id}")]
-        public IActionResult GetBlogs(int id)
+        public IActionResult GetBlog(int id)
         {
-            List<BlogViewModel> lst = new List<BlogViewModel>();    
-
             SqlConnection connection = new SqlConnection(_connectionString);
             connection.Open();
            
-
-
-
-
             string query = @"SELECT [BlogId]
       ,[BlogTitle]
       ,[BlogAuthor]
       ,[BlogContent]
       ,[DeleteFlag]
-            FROM[dbo].[Tbl_Blog] where DeleteFlag=0";
+            FROM [dbo].[Tbl_Blog] WHERE BlogId = @BlogId AND DeleteFlag = 0";
 
             SqlCommand cmd = new SqlCommand(query, connection);
+            cmd.Parameters.AddWithValue("@BlogId", id);
             SqlDataReader reader = cmd.ExecuteReader();
 
-            while (reader.Read())
+            if (!reader.Read())
             {
-                Console.WriteLine(reader["BlogId"]);
-                Console.WriteLine(reader["BlogTitle"]);
-                Console.WriteLine(reader["BlogAuthor"]);
-                Console.WriteLine(reader["BlogContent"]);
-                //lst.Add(new BlogViewModel
-                //{
-                //    Id = Convert.ToInt32(reader["BlogId"]),
-                //    Title = Convert.ToString(reader["BlogTitle"]),
-                //    Author = Convert.ToString(reader["BlogAuthor"]),
-                //    Content = Convert.ToString(reader["BlogContent"]),
-                //    DeleteFlag = Convert.ToBoolean(reader["DeleteFlag"])
-
-                //});
-                var item = new BlogViewModel
-                {
-                    Id = Convert.ToInt32(reader["BlogId"]),
-                    Title = Convert.ToString(reader["BlogTitle"]),
-                    Author = Convert.ToString(reader["BlogAuthor"]),
-                    Content = Convert.ToString(reader["BlogContent"]),
-                    DeleteFlag = Convert.ToBoolean(reader["DeleteFlag"])
-
-                };
-
-                lst.Add(item);
-
+                connection.Close();
+                return NotFound("No data found.");
             }
 
+            var item = new BlogViewModel
+            {
+                Id = Convert.ToInt32(reader["BlogId"]),
+                Title = Convert.ToString(reader["BlogTitle"]),
+                Author = Convert.ToString(reader["BlogAuthor"]),
+                Content = Convert.ToString(reader["BlogContent"]),
+                DeleteFlag = Convert.ToBoolean(reader["DeleteFlag"])
+            };
 
             connection.Close();
 
-            return Ok(lst);
+            return Ok(item);
         }
 
 
@@ -123,7 +103,7 @@ namespace THSDotNetCore.RestApi.Controllers
 
             connection.Open();
 
-            string Query = @"UPDATE [dbo].[Tbl_Blog] SET{conditions} WHERE BlogId = @BlogId";
+            string Query = $@"UPDATE [dbo].[Tbl_Blog] SET {conditions} WHERE BlogId = @BlogId";
 
             SqlCommand Cmd = new SqlCommand(Query, connection);
             Cmd.Parameters.AddWithValue("@BlogId", id);

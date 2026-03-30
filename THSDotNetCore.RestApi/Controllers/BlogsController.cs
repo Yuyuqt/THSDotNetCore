@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using THSDotNetCore.Database.Models;
@@ -12,18 +12,28 @@ namespace THSDotNetCore.RestApi.Controllers
 
         private readonly AppDbContext _db = new AppDbContext();
 
+        [HttpGet]
+        public IActionResult GetBlogs()
+        {
+            var items = _db.TblBlogs
+                .AsNoTracking()
+                .Where(x => x.DeleteFlag == false)
+                .ToList();
+
+            return Ok(items);
+        }
+
         [HttpGet("{id}")]
-        public IActionResult GetBlogs(int id)
+        public IActionResult GetBlog(int id)
         {
             var item = _db.TblBlogs
                 .AsNoTracking()
-                .Where(x=>x.DeleteFlag == false)
-                .ToList();
+                .FirstOrDefault(x => x.BlogId == id && x.DeleteFlag == false);
            if(item is null)
             {
                 return NotFound();
             }
-            return Ok( new { item });
+            return Ok(item);
         }
 
 
@@ -92,7 +102,7 @@ namespace THSDotNetCore.RestApi.Controllers
 
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteBlog(int id, TblBlog blog)
+        public IActionResult DeleteBlog(int id)
         {
 
             var item = _db.TblBlogs.AsNoTracking().FirstOrDefault(x => x.BlogId == id);
