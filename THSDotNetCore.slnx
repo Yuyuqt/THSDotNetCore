@@ -7,6 +7,8 @@
   <Project Path="THSDotNetCore.Database/THSDotNetCore.Database.csproj" Id="c3e1dcc9-6938-4d3a-b66a-98900162c87d" />
   <Project Path="THSDotNetCore.Domain/THSDotNetCore.Domain.csproj" Id="2a101c60-3358-4c73-babf-61ffb0f93cff" />
   <Project Path="THSDotNetCore.RestApi/THSDotNetCore.RestApi.csproj" Id="a0f70e0b-089e-4b9e-ac9e-bba4d0ee64b6" />
+  <Project Path="THSDotNetCore.RestApi2/THSDotNetCore.RestApi2.csproj" Id="d1d9ed6a-62c9-46d2-b7ce-6be019d4ed97" />
+  <Project Path="THSDotNetCore.RestApi3/THSDotNetCore.RestApi3.csproj" Id="653925ec-f079-48d0-8dd8-c3ca9f1f887a" />
   <Project Path="THSDotNetCore.Shared/THSDotNetCore.Shared.csproj" Id="882a6514-dbde-4c20-b73b-4a910f585a8d" />
   <Project Path="THSDotNetCoreConsoleApp/THSDotNetCore.ConsoleApp2.csproj" Id="49b82396-84cc-4a77-b067-7f6ad794db4f" />
   <Project Path="THSDotNetCoreMinimalAPI/THSDotNetCoreMinimalAPI.csproj" Id="28c86414-07c0-401d-82d9-4f7f181adc60" />

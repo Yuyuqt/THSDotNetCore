@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace THSDotNetCore.RestApi.Controllers
+namespace THSDotNetCore.RestApi3.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -28,15 +28,6 @@ namespace THSDotNetCore.RestApi.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
-        }
-
-        [HttpGet("test")]
-        public async Task<IActionResult> Test()
-        {
-            using var client = new HttpClient();
-            var response = await client.GetAsync("birds");
-            var content = await response.Content.ReadAsStringAsync();
-            return StatusCode((int)response.StatusCode, content);
         }
     }
 }

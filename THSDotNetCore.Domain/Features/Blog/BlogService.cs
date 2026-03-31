@@ -5,7 +5,12 @@ namespace THSDotNetCore.Domain.Features
 {
     public class BlogService
     {
-        private readonly AppDbContext _db = new AppDbContext();
+        private readonly AppDbContext _db;
+
+        public BlogService(AppDbContext db)
+        {
+            _db = db;
+        }
 
         public List<TblBlog> GetBlogs()
         {

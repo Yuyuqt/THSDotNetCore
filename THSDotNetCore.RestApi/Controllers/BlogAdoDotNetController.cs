@@ -13,7 +13,12 @@ namespace THSDotNetCore.RestApi.Controllers
     public class BlogAdoDotNetController : ControllerBase
     {
 
-        private readonly string _connectionString = "Data Source = DESKTOP-BP9A061;Initial Catalog=DotNetTraining;User ID=sa;Password=sasa@123;";
+        private readonly string _connectionString;
+
+        public BlogAdoDotNetController(IConfiguration configuration)
+        {
+            _connectionString = configuration.GetConnectionString("DbConnection");
+        }
 
 
         [HttpGet("{id}")]

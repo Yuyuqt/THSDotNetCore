@@ -43,7 +43,7 @@ namespace THSDotNetCore.ConsoleApp3
                 BlogAuthor = "THS refit",
                 BlogContent = "Refit test"
             });
-             //Console.WriteLine($"Yeni blog oluşturuldu. ID: {item4.BlogId}");   
+             // Console.WriteLine($"Yeni blog oluşturuldu. ID: {item4.BlogId}");   
         }
     }
 }

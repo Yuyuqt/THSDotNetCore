@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,10 +11,16 @@ namespace THSDotNetCore.ConsoleApp
 {
     public class EFCoreExample
     {
+        private readonly AppDbContext _db;
+
+        public EFCoreExample(AppDbContext db)
+        {
+            _db = db;
+        }
+
         public void Read()
         {
-            AppDbContext db = new AppDbContext();
-            var lst = db.Blogs.Where(x => x.DeleteFlag == false).ToList();
+            var lst = _db.Blogs.Where(x => x.DeleteFlag == false).ToList();
 
             foreach (var item in lst)
          {
@@ -37,9 +43,8 @@ namespace THSDotNetCore.ConsoleApp
                 BlogAuthor = author,
                 BlogContent = content,
             };
-            AppDbContext db = new AppDbContext();
-            db.Blogs.Add(blog);
-            var result = db.SaveChanges();
+            _db.Blogs.Add(blog);
+            var result = _db.SaveChanges();
 
             Console.WriteLine(result == 1 ? "Saving Successful." : "Saving Failed.");
 
@@ -48,9 +53,8 @@ namespace THSDotNetCore.ConsoleApp
 
         public void Edit(int id)
         {
-            AppDbContext db = new AppDbContext();
-            //db.Blogs.Where(x => x.BlogId ==id).FirstOrDefault();
-          var item =  db.Blogs.Where(x => x.BlogId == id).FirstOrDefault();
+            //_db.Blogs.Where(x => x.BlogId ==id).FirstOrDefault();
+          var item =  _db.Blogs.Where(x => x.BlogId == id).FirstOrDefault();
 
             if (item is null)
             {
@@ -69,10 +73,8 @@ namespace THSDotNetCore.ConsoleApp
 
         public void Update(int id,string title, string author, string content)
         {
-
-            AppDbContext db = new AppDbContext();
-            //db.Blogs.Where(x => x.BlogId ==id).FirstOrDefault();
-            var item = db.Blogs
+            //_db.Blogs.Where(x => x.BlogId ==id).FirstOrDefault();
+            var item = _db.Blogs
                 .AsNoTracking()
                 .FirstOrDefault(x => x.BlogId == id);
 
@@ -96,8 +98,8 @@ namespace THSDotNetCore.ConsoleApp
 
             }
 
-            db.Entry(item).State = EntityState.Modified;
-            var result = db.SaveChanges();
+            _db.Entry(item).State = EntityState.Modified;
+            var result = _db.SaveChanges();
 
             Console.WriteLine(result == 1 ? "Updating Successful." : "Updating Failed.");
 
@@ -105,9 +107,8 @@ namespace THSDotNetCore.ConsoleApp
 
         public void Delete(int id)
         {
-            AppDbContext db = new AppDbContext();
-            //db.Blogs.Where(x => x.BlogId ==id).FirstOrDefault();
-            var item = db.Blogs
+            //_db.Blogs.Where(x => x.BlogId ==id).FirstOrDefault();
+            var item = _db.Blogs
                 .AsNoTracking()
                 .FirstOrDefault(x => x.BlogId == id);
 
@@ -118,8 +119,8 @@ namespace THSDotNetCore.ConsoleApp
             };
 
 
-            db.Entry(item).State = EntityState.Deleted;
-            var result = db.SaveChanges();
+            _db.Entry(item).State = EntityState.Deleted;
+            var result = _db.SaveChanges();
 
             Console.WriteLine(result == 1 ? "Deleting Successful." : "Deleting Failed.");
 
