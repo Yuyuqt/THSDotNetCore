@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog CRUD</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+</head>
+
+<body>
+
+   <div class="mb-3">
+  <label for="txtTitle" class="form-label">Title</label>
+  <input type="text" class="form-control" id="txtTitle">
+</div>
+   <div class="mb-3">
+  <label for="txtAuthor" class="form-label">Author</label>
+  <input type="text" class="form-control" id="txtAuthor">
+</div>
+   <div class="mb-3">
+  <label for="txtContent" class="form-label">Content</label>
+  <input type="text" class="form-control" id="txtContent">
+</div>
+<button type="button" id="btnCancel" class="btn btn-secondary">Cancel</button>
+<button type="button" id="btnSave" class="btn btn-success">Save</button>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Content</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="tblBlogs">
+        
+    </tbody>
+</table>
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+    <script src="jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+<script>
+   let editingId = null;
+
+   $('#btnCancel').click(function(){
+    clearControls();
+   });
+   $('#btnSave').click(function(){
+    if(editingId){
+        updateBlogPost();
+    }else{
+        saveBlogPost();
+    }
+   });
+
+   // Clear 
+   function clearControls(){
+    $('#txtTitle').val('');
+    $('#txtAuthor').val('');
+    $('#txtContent').val('');
+    editingId = null;
+    $('#btnSave').text('Save');
+   }
+
+   // Create 
+   function saveBlogPost(){
+    const title = $('#txtTitle').val();
+    const author = $('#txtAuthor').val();
+    const content = $('#txtContent').val();
+
+    
+
+    let lst = localStorage.getItem('blogs');
+    if(lst==null){
+        lst = [];
+    }else{
+        lst = JSON.parse(lst);
+    }
+
+const blog ={
+        id: uuidv4(),
+        title: title,
+        author: author,
+        content: content
+    };
+
+    lst.push(blog);
+    const jsonStr = JSON.stringify(lst);
+    localStorage.setItem('blogs', jsonStr);
+    clearControls();
+    displayBlogs();
+    alert('Save Successfully!');
+   }
+
+   // Update existing blog post
+   function updateBlogPost(){
+    const title = $('#txtTitle').val();
+    const author = $('#txtAuthor').val();
+    const content = $('#txtContent').val();
+
+    let lst = localStorage.getItem('blogs');
+    if(lst!=null){
+        lst = JSON.parse(lst);
+        const index = lst.findIndex(item => item.id === editingId);
+        if(index !== -1){
+            lst[index] = {id: editingId, title, author, content};
+            const jsonStr = JSON.stringify(lst);
+            localStorage.setItem('blogs', jsonStr);
+            clearControls();
+            displayBlogs();
+            alert('Update Successfully!');
+        }
+    }
+   }
+
+   // Display thingy
+   function displayBlogs(){
+    let lst = localStorage.getItem('blogs');
+    console.log('Blogs from localStorage:', lst);
+    if(lst!=null){
+        lst = JSON.parse(lst);
+        console.log('Parsed blogs:', lst);
+        let needsSave = false;
+        lst.forEach(item => {
+            if(!item.id){
+                item.id = uuidv4();
+                needsSave = true;
+            }
+        });
+        if(needsSave){
+            localStorage.setItem('blogs', JSON.stringify(lst));
+            console.log('Saved updated blogs with IDs');
+        }
+        let html = '';
+        lst.forEach((item, index)=>{
+            html += `<tr>
+            <td>${index+1}</td>
+            <td>${item.title}</td>
+            <td>${item.author}</td>
+            <td>${item.content}</td>
+            <td><button class="btn btn-warning btn-sm edit-btn" data-id="${item.id}">Edit</button> 
+                <button class="btn btn-danger btn-sm delete-btn" data-id="${item.id}">Delete</button></td>
+        </tr>`;
+        });
+        $('#tblBlogs').html(html);
+        console.log('Table updated with', lst.length, 'blogs');
+    } else {
+        console.log('No blogs in localStorage');
+    }
+   }
+
+   $(document).ready(function(){
+    displayBlogs();
+   });
+
+   $('#tblBlogs').on('click', '.edit-btn', function(){
+    const id = $(this).data('id');
+    editBlog(id);
+   });
+
+   $('#tblBlogs').on('click', '.delete-btn', function(){
+    const id = $(this).data('id');
+    deleteBlog(id);
+   });
+
+   // Load blog at the top part 
+   function editBlog(id){
+    let lst = localStorage.getItem('blogs');
+    if(lst!=null){
+        lst = JSON.parse(lst);
+        const blog = lst.find(item => item.id === id);
+        if(blog){
+            $('#txtTitle').val(blog.title);
+            $('#txtAuthor').val(blog.author);
+            $('#txtContent').val(blog.content);
+            editingId = id;
+            $('#btnSave').text('Update');
+        }
+    }
+   }
+
+   // Delete
+   function deleteBlog(id){
+    if(confirm('Are you sure you want to delete this blog?')){
+        let lst = localStorage.getItem('blogs');
+        if(lst!=null){
+            lst = JSON.parse(lst);
+            lst = lst.filter(item => item.id !== id);
+            const jsonStr = JSON.stringify(lst);
+            localStorage.setItem('blogs', jsonStr);
+            displayBlogs();
+            alert('Delete Successfully!');
+        }
+    }
+   }
+
+   // Generate unique ID
+// Source - https://stackoverflow.com/a/2117523
+// Posted by broofa, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-04-01, License - CC BY-SA 4.0
+
+
+function uuidv4() {
+  return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+    (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
+  );
+}
+
+
+</script>
+</body>
+</html>
