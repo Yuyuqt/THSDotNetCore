@@ -50,7 +50,11 @@ minimal api / [ado.net / dapper = custom service]
 .net core 3.1
 
 
+MVC
+Model View Controller
 
+https://localhost:3000/home/index
 
+HomeController > Model => View (model) => Page (html)
 
 

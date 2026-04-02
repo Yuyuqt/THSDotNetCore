@@ -143,8 +143,10 @@ const blog ={
             <td>${item.title}</td>
             <td>${item.author}</td>
             <td>${item.content}</td>
-            <td><button class="btn btn-warning btn-sm edit-btn" data-id="${item.id}">Edit</button> 
-                <button class="btn btn-danger btn-sm delete-btn" data-id="${item.id}">Delete</button></td>
+            <td>
+            <button class="btn btn-warning btn-sm edit-btn" data-id="${item.id}">Edit</button> 
+            <button class="btn btn-danger btn-sm delete-btn" data-id="${item.id}">Delete</button>
+                </td>
         </tr>`;
         });
         $('#tblBlogs').html(html);

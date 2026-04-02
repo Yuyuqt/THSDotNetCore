@@ -16,7 +16,7 @@ namespace THSDotNetCore.Domain.Features
         {
             var lst = _db.TblBlogs
                 .AsNoTracking()
-                .Where(x => x.DeleteFlag == false)
+                .Where(x => x.DeleteFlag == false || x.DeleteFlag == null)
                 .ToList();
             return lst;
         }
@@ -25,12 +25,13 @@ namespace THSDotNetCore.Domain.Features
         {
             var item = _db.TblBlogs
                 .AsNoTracking()
-                .FirstOrDefault(x => x.BlogId == id && x.DeleteFlag == false);
+                .FirstOrDefault(x => x.BlogId == id && (x.DeleteFlag == false || x.DeleteFlag == null));
             return item;
         }
 
         public int CreateBlog(TblBlog blog)
         {
+            blog.DeleteFlag = false;
             _db.TblBlogs.Add(blog);
             int result = _db.SaveChanges();
             return result;
