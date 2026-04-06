@@ -1,7 +1,14 @@
-﻿// See https://aka.ms/new-console-template for more information
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-Console.WriteLine("Hello, World!");
+using var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+});
+
+ILogger logger = loggerFactory.CreateLogger<Program>();
+
+logger.LogInformation("Hello, World!");
 
 
 var blog = new BlogModel
@@ -13,18 +20,14 @@ var blog = new BlogModel
 
 };
 
-//string jsonStr = JsonConvert.SerializeObject(blog, Formatting.Indented);
 string jsonStr = blog.ToJson(); //#C to JSON
 
-Console.WriteLine(jsonStr);
+logger.LogInformation("Serialized Blog: {Json}", jsonStr);
 
 string jsonStr2 = """{ "Id": 1, "Title": "Test title","Author": "Test author","Content": "Test content", "DeleteFlag": false}""";
- var blog2 = JsonConvert.DeserializeObject<BlogModel>(jsonStr2);    
+var blog2 = JsonConvert.DeserializeObject<BlogModel>(jsonStr2);    
 
-//System.Text.Json.JsonSerializer.Serialize(blog);
-//System.Text.Json.JsonSerializer.Deserialize<BlogModel>(jsonStr2);
-  
-Console.WriteLine(blog2.Title);  
+logger.LogInformation("Deserialized Blog Title: {Title}", blog2?.Title);  
 Console.ReadLine();
 
 public class BlogModel

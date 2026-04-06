@@ -1,0 +1,56 @@
+@model MixedChartModel
+@{
+    int[] _websiteBlog = Model.WebsiteBlog;
+    int[] _socialMedia = Model.SocialMedia;
+    string[] _labels = Model.Labels;
+}
+
+<div id="chart"></div>
+
+@section scripts {
+    <script>
+        const _websiteBlog = @Html.Raw(JsonConvert.SerializeObject(_websiteBlog));
+        const _socialMedia = @Html.Raw(JsonConvert.SerializeObject(_socialMedia));
+        const _labels = @Html.Raw(JsonConvert.SerializeObject(_labels));
+
+        var options = {
+            series: [{
+                name: 'Website Blog',
+                type: 'column',
+                data: _websiteBlog
+            }, {
+                name: 'Social Media',
+                type: 'line',
+                data: _socialMedia
+            }],
+            chart: {
+                height: 350,
+                type: 'line',
+            },
+            stroke: {
+                width: [0, 4]
+            },
+            title: {
+                text: 'Traffic Sources'
+            },
+            dataLabels: {
+                enabled: true,
+                enabledOnSeries: [1]
+            },
+            labels: _labels,
+            yaxis: [{
+                title: {
+                    text: 'Website Blog',
+                },
+            }, {
+                opposite: true,
+                title: {
+                    text: 'Social Media'
+                }
+            }]
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    </script>
+}
